@@ -1,0 +1,35 @@
+services:
+  db:
+    container_name: postgresCont
+    image: postgres:latest
+    restart: always
+    env_file:
+      - ../.env
+    volumes:
+      - postgres_db:/var/lib/postgresql/data
+    ports:
+      - "5332:5432"
+    networks:
+       - postgres-db-network
+  pgadmin:
+      image: dpage/pgadmin4
+      env_file:
+      - ../.env
+      ports:
+        - 15432:80
+      volumes:
+        - pgadmin:/var/lib/pgadmin
+      depends_on:
+        - db
+      networks:
+       - postgres-db-network
+
+networks:
+  postgres-db-network:
+    driver: bridge
+
+volumes:
+    postgres_db:
+      driver: local
+    pgadmin:
+      driver: local
