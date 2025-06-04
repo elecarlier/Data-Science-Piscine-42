@@ -92,11 +92,11 @@ def merge_tables():
             conn.execute(text(f"CREATE TABLE customers AS {union_sql};"))
 
             count = conn.execute(text("SELECT COUNT(*) FROM customers")).scalar()
-            print(f"✅ Table 'customers' créée avec succès, contenant {count} lignes.")
+            print(f"Table 'customers' created with success, with {count}.")
 
     except Exception as e:
         import traceback
-        print("❌ Error merging tables:", e)
+        print("Error merging tables:", e)
         traceback.print_exc()
 
 if __name__ == "__main__":
