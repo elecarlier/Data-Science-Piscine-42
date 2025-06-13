@@ -15,7 +15,7 @@ DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NA
 def remove_duplicates():
     try:
         engine = create_engine(DATABASE_URL)
-        with engine.connect() as conn:
+        with engine.begin() as conn:
             print("Connected to DB.")
             print("Removing duplicates within 1 second interval...")
 

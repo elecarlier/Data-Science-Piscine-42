@@ -54,7 +54,6 @@ def load_item_table(path, tableName):
 
 def clean_item_table():
     try:
-
         engine = create_engine(DATABASE_URL)
         with engine.begin() as conn:
             print("Creating clean_items table (deduplicated)...")
@@ -103,7 +102,6 @@ def fusion():
 
     except Exception as e:
         print("Error while fusioning tables:", e)
-
 
 
 if __name__ == "__main__":

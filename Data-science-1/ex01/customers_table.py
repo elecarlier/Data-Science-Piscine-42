@@ -22,18 +22,6 @@ def table_exists(engine, table_name):
     metadata.reflect(bind=engine)
     return table_name in metadata.tables
 
-
-def table_exists(engine, table_name):
-    metadata = MetaData()
-    metadata.reflect(bind=engine)
-    return table_name in metadata.tables
-
-
-def table_exists(engine, table_name):
-    metadata = MetaData()
-    metadata.reflect(bind=engine)
-    return table_name in metadata.tables
-
 def load(path, tableName):
 	try:
 		engine = create_engine(DATABASE_URL)
@@ -43,7 +31,6 @@ def load(path, tableName):
 		if not table_exists(engine, tableName):
 			print(f"Table {tableName} doesn't exist, creating...")
 			data = pd.read_csv(path)
-
 
 			data_types = {
 				"event_time": sqlalchemy.types.TIMESTAMP(),
