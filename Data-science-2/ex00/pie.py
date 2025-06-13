@@ -19,7 +19,7 @@ def create_piechart():
         engine = create_engine(DATABASE_URL)
         with engine.begin() as conn:
             print("Connected to DB.")
-            df = pd.read_sql("SELECT event_type FROM customers", engine)
+            df = pd.read_sql("SELECT event_type FROM customers", conn)
             event_counts = df['event_type'].value_counts()
             plt.figure(figsize=(8, 8))
             plt.pie(event_counts, labels=event_counts.index, autopct='%1.1f%%', startangle=180)

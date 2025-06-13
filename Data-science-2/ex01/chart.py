@@ -28,8 +28,17 @@ def fetch_data():
     """
     df = pd.read_sql(query, engine)
     df["event_time"] = pd.to_datetime(df["event_time"])
-    df["month"] = df["event_time"].dt.to_period("M").dt.to_timestamp() #adding coll month
+    df["day"] = df["event_time"].dt.date
+    df["month"] = df["event_time"].dt.to_period("M").dt.to_timestamp()
     return df
+
+def compute_daily_stats(df):
+    daily_stats = df.groupby("day").agg(
+        customers=("user_id", "nunique"),
+        total_sales=("price", "sum")
+    )
+    daily_stats["avg_spend"] = daily_stats["total_sales"] / daily_stats["customers"]
+    return daily_stats
 
 
 def compute_monthly_stats(df):
@@ -41,30 +50,35 @@ def compute_monthly_stats(df):
     return monthly_stats
 
 
-def create_chart_clients(monthly_stats):
+def create_chart_clients(daily_stats):
     plt.figure(figsize=(10, 6))
-    plt.plot(monthly_stats.index, monthly_stats["customers"], marker='o')
+    plt.plot(daily_stats.index, daily_stats["customers"], marker='o')
     plt.ylabel('Number of customers')
-    plt.xticks(monthly_stats.index, x_labels)
+    xticks = [d for d in daily_stats.index if d.day == 1]
+    xticklabels = [d.strftime("%b") for d in xticks]
+    plt.xticks(xticks, xticklabels)
     plt.grid(True)
     plt.title("Number of Customers per Month")
     plt.show()
 
 def create_chart_sales(monthly_stats):
     plt.figure(figsize=(10, 6))
-    plt.bar(monthly_stats.index, monthly_stats["total_sales"] / 1_000_000)
+    plt.bar(monthly_stats.index, monthly_stats["total_sales"] / 1_000_000, width=15)
     plt.ylabel('Total sales (millions of Altairian Dollars)')
-    plt.xticks(monthly_stats.index, x_labels)
+    xticks = monthly_stats.index
+    plt.xticks(xticks, x_labels)
     plt.grid(axis='y')
     plt.title("Total Sales per Month")
     plt.show()
 
-def create_chart_averageSales(monthly_stats):
+def create_chart_averageSales(daily_stats):
     plt.figure(figsize=(10, 6))
-    plt.fill_between(monthly_stats.index, monthly_stats["avg_spend"], alpha=0.4)
-    plt.plot(monthly_stats.index, monthly_stats["avg_spend"], marker='o')
+    plt.fill_between(daily_stats.index, daily_stats["avg_spend"], alpha=0.4)
+    plt.plot(daily_stats.index, daily_stats["avg_spend"], marker='o')
     plt.ylabel('Average spend per customer (Altairian Dollars)')
-    plt.xticks(monthly_stats.index, x_labels)
+    xticks = [d for d in daily_stats.index if d.day == 1]
+    xticklabels = [d.strftime("%b") for d in xticks]
+    plt.xticks(xticks, xticklabels)
     plt.grid(True)
     plt.title("Average Spend per Customer per Month")
     plt.show()
@@ -73,6 +87,7 @@ def create_chart_averageSales(monthly_stats):
 if __name__ == "__main__":
     df = fetch_data()
     monthly_stats = compute_monthly_stats(df)
-    create_chart_clients(monthly_stats)
+    daily_stats = compute_daily_stats(df)
+    create_chart_clients(daily_stats)
     create_chart_sales(monthly_stats)
-    create_chart_averageSales(monthly_stats)
+    create_chart_averageSales(daily_stats)
