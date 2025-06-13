@@ -16,7 +16,6 @@ DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NA
 
 x_labels = ["Oct", "Nov", "Dec", "Jan", "Feb"]
 
-#event_time	price	user_id	month
 def fetch_data():
     engine = create_engine(DATABASE_URL)
     query = """
